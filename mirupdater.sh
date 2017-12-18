@@ -1,26 +1,26 @@
 #!/bin/bash
 #####################################################################
-#																	#
-#	"Arch Mirrorlist Updater"										#
-#	Filename: mirupdater.sh											#
-#	Author: Rasmus van Guido (goldenfinch.net@zoho.com)				#
-#	Version: 1.0													#
-#	Licence: GNU General Public License v2.0						#
-#																	#
-#	Description: This is a simple bash script for use in an Arch	#
-#		Linux operating system. It basically simplify the updating	#
-#		and selecting of faster mirrors for your mirrorlist file.	#
-#		So, instead of typing several commands on the terminal		#
-#		just to update your mirrorlist, this script will do just 	#
-#		that for you.												#
-#																	#
-#	How to use this script:											#
-#		1. Just place this script in your home directory			#
-#		2. Make sure you make this file executable					#
-#		3. Then run it like so in your terminal: # ./mirupdater.sh	#
-#																	#
-#	PS: You need to be root to run this script. Thank you!			#
-#																	#
+#                                                                   #
+#  "Arch Mirrorlist Updater"                                        #
+#  Filename: mirupdater.sh                                          #
+#  Author: Rasmus van Guido (goldenfinch.net@zoho.com)              #
+#  Version: 1.0                                                     #
+#  Licence: GNU General Public License v2.0                         #
+#                                                                   #
+#  Description: This is a simple bash script for use in an Arch     #
+#     Linux operating system. It basically simplify the updating    #
+#     and selecting of faster mirrors for your mirrorlist file.     #
+#     So, instead of typing several commands on the terminal        #
+#     just to update your mirrorlist, this script will do just      #
+#     that for you.                                                 #
+#                                                                   #
+#  How to use this script:                                          #
+#     1. Just place this script in your home directory              #
+#     2. Make sure you make this file executable                    #
+#     3. Then run it like so in your terminal: # ./mirupdater.sh    #
+#                                                                   #
+#  PS: You need to be root to run this script. Thank you!           #
+#                                                                   #
 #####################################################################
 
 # CONFIGURATION
