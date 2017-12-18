@@ -56,8 +56,8 @@ fi
 
 # Make sure this file is running by a 'root' user
 if [ "$USER" != "$ARUSER" ]; then
-	printf "\n::ERROR: Please run this script as 'root'...\n"
-	printf "::Please log in as a root user then try again...\n\n"
+	printf "\n::IMPORTANT: You need to be 'root' to perform this task...\n"
+	printf "::Please log in as a root then try again...\n\n"
 	exit 0
 fi
 
