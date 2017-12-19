@@ -61,7 +61,24 @@ if [ "$USER" != "$ARUSER" ]; then
 	exit 0
 fi
 
+# Some utility check, make sure we have all that we need
+if [ ! -f "/usr/bin/bash" ]; then
+	printf "\n::ERROR: Missing required dependency: bash...\n"
+	exit 0
+fi
+
+if [ ! -f "/usr/bin/rankmirrors" ]; then
+	printf "\n::ERROR: Missing required dependency: rankmirrors...\n"
+	exit 0
+fi
+
+if [ ! -f "/usr/bin/curl" ]; then
+	printf "\n::ERROR: Missing required dependency: curl...\n"
+	exit 0
+fi
+
 printf "::Checking important mirrorlist files...\n"
+
 sleep "$SDELAY"
 
 if [[ "$ARCHCK"==true ]]; then
@@ -91,6 +108,7 @@ printf "\n::Updating mirrors...\n"
 printf "::Selecting the faster local mirrors (this may take a few minutes)...\n"
 printf "\n::NOTE: If you want to monitor this activity, open up a new terminal\n"
 printf "::      and run this command: tail -f /etc/pacman.d/mirrorlist\n\n"
+
 sleep "$SDELAY"
 
 if [ ! -f "$MLPCBK" ]; then
