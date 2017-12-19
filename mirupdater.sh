@@ -133,6 +133,6 @@ if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	printf "\n::DONE!\n\n"
 	
 	# Cleanup
-	rm -f "$MLTEMP" &
+	rm -f "$MLTEMP"
 	exit 0
 fi
