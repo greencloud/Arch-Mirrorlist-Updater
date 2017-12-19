@@ -6,7 +6,7 @@
 #  Author: Rasmus van Guido (goldenfinch.net@zoho.com)              #
 #  Version: 1.0                                                     #
 #  Licence: GNU General Public License v2.0                         #
-#                                                                   #
+#																	#
 #  Description: This is a simple bash script for use in an Arch     #
 #     Linux operating system. It basically simplify the updating    #
 #     and selecting of faster mirrors for your mirrorlist file.     #
@@ -35,10 +35,12 @@ ARCHCK=false
 SDELAY=2
 ISARCH=$( { /usr/bin/uname -a; } 2>&1 )
 MRCOMP="https://www.archlinux.org/mirrorlist/all/"
-MLFILE="/etc/pacman.d/mirrorlist"
-MLPCNW="/etc/pacman.d/mirrorlist.pacnew"
-MLPCOL="/etc/pacman.d/mirrorlist.old"
-MLPCBK="/etc/pacman.d/mirrorlist.backup"
+MIRDIR="/etc/pacman.d/"
+MLFILE="mirrorlist"
+MLPCNW="mirrorlist.pacnew"
+MLPCOL="mirrorlist.old"
+MLPCBK="mirrorlist.backup"
+MLTEMP="/tmp/mirrorlist.tmp"
 
 if [[ "$ISARCH"==*"$ARCHOS"* ]]; then
 	# Just to make sure we're running on a Archlinux OS platform
@@ -78,24 +80,24 @@ if [ ! -f "/usr/bin/curl" ]; then
 fi
 
 printf "::Checking important mirrorlist files...\n"
-
 sleep "$SDELAY"
+cp -f "$MIRDIR$MLFILE" "$MLTEMP"
 
 if [[ "$ARCHCK"==true ]]; then
 	# Check for the actual mirrorlist file and back it up
-	if [ -f "$MLFILE" ]; then
-		cp -f "$MLFILE" "$MLPCOL"
+	if [ -f "$MIRDIR$MLFILE" ]; then
+		cp -f "$MIRDIR$MLFILE" "$MIRDIR$MLPCOL"
 		printf "::Main mirrorlist file is intact (backup created: mirrorlist.old)...\n"
 	else
-		printf "::FATAL ERROR: Mirrorlist file is missing...\n\n"
+		printf "::FATAL ERROR: $MIRDIR$MLFILE file is missing...\n\n"
 		exit 0
 	fi
 	
 	# Check for the mirrorlist.pacnew file, if there's none, make one
-	if [ ! -f "$MLPCNW" ]; then
+	if [ ! -f "$MIRDIR$MLPCNW" ]; then
 		printf "::Getting a fresh mirrorlist.pacnew file...\n\n"
 		sleep "$SDELAY"
-		curl -o "$MLPCNW" "$MRCOMP"
+		curl -o "$MIRDIR$MLPCNW" "$MRCOMP"
 		printf "\n"
 	else
 		printf "::mirrorlist.pacnew is still the latest update...\n"
@@ -104,31 +106,33 @@ else
 	exit 0
 fi
 
-printf "\n::Updating mirrors...\n"
+printf "::Updating mirrors...\n"
 printf "::Selecting the faster local mirrors (this may take a few minutes)...\n"
 printf "\n::NOTE: If you want to monitor this activity, open up a new terminal\n"
 printf "::      and run this command: tail -f /etc/pacman.d/mirrorlist\n\n"
 
 sleep "$SDELAY"
 
-if [ ! -f "$MLPCBK" ]; then
-	cp -f "$MLPCNW" "$MLPCBK"
-	sed -i 's/^#Server/Server/' "$MLPCBK"
+if [ ! -f "$MIRDIR$MLPCBK" ]; then
+	cp -f "$MIRDIR$MLPCNW" "$MIRDIR$MLPCBK"
+	sed -i 's/^#Server/Server/' "$MIRDIR$MLPCBK"
 else
-	sed -i 's/^#Server/Server/' "$MLPCBK"
+	sed -i 's/^#Server/Server/' "$MIRDIR$MLPCBK"
 fi
 
-if [ -f "$MLPCBK" ] && [ -f "$MLPCNW" ]; then
-	printf "::Please wait................................\n"
-	rankmirrors -n "$NMIRRS" "$MLPCBK" > "$MLFILE"
-	printf "\n::Done selecting local mirrors. $NMIRRS mirror(s) selected...\n"
+if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
+	printf "::Mirror update in progress. Please wait.......................\n"
+	rankmirrors -n "$NMIRRS" "$MIRDIR$MLPCBK" > "$MIRDIR$MLFILE"
 	sleep "$SDELAY"
 	
-	# Run package manager update
+	printf "\n::Done selecting local mirrors. $NMIRRS mirror(s) selected...\n"
 	printf "::Will now update pacman's package list...\n\n"
 	sleep "$SDELAY"
+	
 	pacman -Syyu
+	printf "\n::DONE!\n\n"
+	
+	# Cleanup
+	rm -f "$MLTEMP" &
+	exit 0
 fi
-
-printf "\n::DONE!\n\n"
-exit 0
