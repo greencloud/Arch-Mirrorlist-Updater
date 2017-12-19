@@ -6,7 +6,7 @@
 #  Author: Rasmus van Guido (goldenfinch.net@zoho.com)              #
 #  Version: 1.0                                                     #
 #  Licence: GNU General Public License v2.0                         #
-#																	#
+#                                                                   #
 #  Description: This is a simple bash script for use in an Arch     #
 #     Linux operating system. It basically simplify the updating    #
 #     and selecting of faster mirrors for your mirrorlist file.     #
@@ -100,13 +100,13 @@ if [[ "$ARCHCK"==true ]]; then
 		printf "::${TXCOLR}FATAL ERROR:${NOCOLR} $MIRDIR$MLFILE file is missing...\n\n"
 		exit 0
 	fi
-	
+
 	# Check for the mirrorlist.pacnew file, if there's none, make one
 	if [ ! -f "$MIRDIR$MLPCNW" ]; then
 		printf "::Getting a fresh mirrorlist.pacnew file...\n\n"
-		
+
 		sleep "$SDELAY"
-		
+
 		curl -o "$MIRDIR$MLPCNW" "$MRCOMP"
 		printf "\n"
 	else
@@ -133,20 +133,20 @@ fi
 if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	printf "::Mirror update in progress. Please wait.......................\n"
 	rankmirrors -n "$NMIRRS" "$MIRDIR$MLPCBK" > "$MIRDIR$MLFILE"
-	
+
 	sleep "$SDELAY"
-	
+
 	printf "\n::Done selecting local mirrors. $NMIRRS mirror(s) selected...\n"
 	printf "::Will now update pacman's package list...\n\n"
-	
+
 	sleep "$SDELAY"
 
 	if [ -f "$DBLOCK" ]; then
 		printf "::${TXCOLR}WARNING:${NOCOLR} Pacman appears to be running. "
 		printf "Finish the pacman process first...\n"
-		
+
 		read -p "::Done running pacman? Y:Continue, n:Terminate (Y/n) " YN
-	
+
 		case $YN in
 			[Yy]*) 
 				rm -f "$DBLOCK" ;;
@@ -160,7 +160,7 @@ if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	# Force update pacman's package list
 	pacman -Syyu
 	printf "\n::Done!\n\n"
-	
+
 	# Cleanup
 	rm -f "$MIRDIR$MLPCBK"
 	rm -f "$MLTEMP"
