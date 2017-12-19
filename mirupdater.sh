@@ -41,15 +41,19 @@ MLPCNW="mirrorlist.pacnew"
 MLPCOL="mirrorlist.old"
 MLPCBK="mirrorlist.backup"
 MLTEMP="/tmp/mirrorlist.tmp"
+DBLOCK="/var/lib/pacman/db.lck"
+TXCOLR="\033[0;33m"
+NOCOLR="\033[0m"
 
 if [[ "$ISARCH"==*"$ARCHOS"* ]]; then
 	# Just to make sure we're running on a Archlinux OS platform
 	printf "\n::Thank you for using this mirrorlist updater :)\n"
+	printf "::${TXCOLR}WARNING:${NOCOLR} Before you continue, make sure pacman is not running...\n"
 	read -n1 -r -p "::Press space bar to continue..."
 	printf "\n"
 	ARCHCK=true
 else
-	printf "\n===== ERROR =====\n"
+	printf "\n${TXCOLR}===== ERROR =====${NOCOLR}\n"
 	printf "This script is only intended for Achlinux Operating System.\n"
 	printf "For more information, please visit: https://www.archlinux.org/\n"
 	printf "\n"
@@ -65,38 +69,44 @@ fi
 
 # Some utility check, make sure we have all that we need
 if [ ! -f "/usr/bin/bash" ]; then
-	printf "\n::ERROR: Missing required dependency: bash...\n"
+	printf "\n::${TXCOLR}ERROR:${NOCOLR} Missing required dependency: bash...\n"
 	exit 0
 fi
 
 if [ ! -f "/usr/bin/rankmirrors" ]; then
-	printf "\n::ERROR: Missing required dependency: rankmirrors...\n"
+	printf "\n::${TXCOLR}ERROR:${NOCOLR} Missing required dependency: rankmirrors...\n"
 	exit 0
 fi
 
 if [ ! -f "/usr/bin/curl" ]; then
-	printf "\n::ERROR: Missing required dependency: curl...\n"
+	printf "\n::${TXCOLR}ERROR:${NOCOLR} Missing required dependency: curl...\n"
 	exit 0
 fi
 
 printf "::Checking important mirrorlist files...\n"
+
 sleep "$SDELAY"
+
+# Save a copy of the mirrorlist file in the /tmp directory
 cp -f "$MIRDIR$MLFILE" "$MLTEMP"
 
 if [[ "$ARCHCK"==true ]]; then
+
 	# Check for the actual mirrorlist file and back it up
 	if [ -f "$MIRDIR$MLFILE" ]; then
 		cp -f "$MIRDIR$MLFILE" "$MIRDIR$MLPCOL"
 		printf "::Main mirrorlist file is intact (backup created: mirrorlist.old)...\n"
 	else
-		printf "::FATAL ERROR: $MIRDIR$MLFILE file is missing...\n\n"
+		printf "::${TXCOLR}FATAL ERROR:${NOCOLR} $MIRDIR$MLFILE file is missing...\n\n"
 		exit 0
 	fi
 	
 	# Check for the mirrorlist.pacnew file, if there's none, make one
 	if [ ! -f "$MIRDIR$MLPCNW" ]; then
 		printf "::Getting a fresh mirrorlist.pacnew file...\n\n"
+		
 		sleep "$SDELAY"
+		
 		curl -o "$MIRDIR$MLPCNW" "$MRCOMP"
 		printf "\n"
 	else
@@ -123,16 +133,36 @@ fi
 if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	printf "::Mirror update in progress. Please wait.......................\n"
 	rankmirrors -n "$NMIRRS" "$MIRDIR$MLPCBK" > "$MIRDIR$MLFILE"
+	
 	sleep "$SDELAY"
 	
 	printf "\n::Done selecting local mirrors. $NMIRRS mirror(s) selected...\n"
 	printf "::Will now update pacman's package list...\n\n"
-	sleep "$SDELAY"
 	
+	sleep "$SDELAY"
+
+	if [ -f "$DBLOCK" ]; then
+		printf "::${TXCOLR}WARNING:${NOCOLR} Pacman appears to be running. "
+		printf "Finish the pacman process first...\n"
+		
+		read -p "::Done running pacman? Y:Continue, n:Terminate (Y/n) " YN
+	
+		case $YN in
+			[Yy]*) 
+				rm -f "$DBLOCK" ;;
+			[Nn]*)
+				kill 0 ;;
+			*)
+				rm -f "$DBLOCK" ;;
+		esac
+	fi	
+
+	# Force update pacman's package list
 	pacman -Syyu
-	printf "\n::DONE!\n\n"
+	printf "\n::Done!\n\n"
 	
 	# Cleanup
+	rm -f "$MIRDIR$MLPCBK"
 	rm -f "$MLTEMP"
 	exit 0
 fi
