@@ -71,7 +71,7 @@ fi
 # Make sure this file is running by a 'root' user
 if [ "$USER" != "$ARUSER" ]; then
 	printf "\n::${TXCOLR}IMPORTANT:${NOCOLR} You need to be 'root' to perform this task...\n"
-	printf "::Please log in as a root then try again...\n\n"
+	printf "::Please log in as a root (or use sudo) then try again...\n\n"
 	exit 0
 fi
 
@@ -125,7 +125,7 @@ else
 fi
 
 printf "::Updating mirrors...\n"
-printf "::Selecting the faster local mirrors (this may take a few minutes)...\n"
+printf "::Selecting the faster local mirrors (this might take a few minutes)...\n"
 printf "\n::NOTE: If you want to monitor this activity, open up a new terminal\n"
 printf "::      and run this command: tail -f /etc/pacman.d/mirrorlist\n\n"
 
