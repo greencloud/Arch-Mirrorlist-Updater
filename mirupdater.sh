@@ -52,9 +52,8 @@ if [[ "$ISARCH"==*"$ARCHOS"* ]]; then
 	read -n1 -r -p "::Press space bar to continue..."
 	printf "\n"
 
-	ps cax | grep pacman > /dev/null
-
-	if [ $? -eq 0 ]; then
+	PACRUN=`ps aux | grep -v grep | grep pacman | wc -l` 
+	if [ $PACRUN -gt 0 ]; then
 		printf "\n::${TXCOLR}ABORTED:${NOCOLR} Pacman appears to be running...\n"
 		printf "::Please wait for it to finish then try again...\n\n"
 		exit 0
