@@ -167,7 +167,7 @@ if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	fi	
 
 	# Force update pacman's package list
-	pacman -Syyu
+	pacman -Syy
 	printf "\n::Done!\n\n"
 
 	# Cleanup
