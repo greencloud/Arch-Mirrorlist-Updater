@@ -71,7 +71,7 @@ fi
 
 # Make sure this file is running by a 'root' user
 if [ "$USER" != "$ARUSER" ]; then
-	printf "\n::IMPORTANT: You need to be 'root' to perform this task...\n"
+	printf "\n::${TXCOLR}IMPORTANT:${NOCOLR} You need to be 'root' to perform this task...\n"
 	printf "::Please log in as a root then try again...\n\n"
 	exit 0
 fi
