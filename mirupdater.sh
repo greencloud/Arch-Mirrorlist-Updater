@@ -51,6 +51,15 @@ if [[ "$ISARCH"==*"$ARCHOS"* ]]; then
 	printf "::${TXCOLR}WARNING:${NOCOLR} Before you continue, make sure pacman is not running...\n"
 	read -n1 -r -p "::Press space bar to continue..."
 	printf "\n"
+
+	ps cax | grep pacman > /dev/null
+
+	if [ $? -eq 0 ]; then
+		printf "\n::${TXCOLR}ABORTED:${NOCOLR} Pacman appears to be running...\n"
+		printf "::Please wait for it to finish then try again...\n\n"
+		exit 0
+	fi
+
 	ARCHCK=true
 else
 	printf "\n${TXCOLR}===== ERROR =====${NOCOLR}\n"
