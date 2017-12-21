@@ -143,6 +143,7 @@ if [ -f "$MIRDIR$MLPCBK" ] && [ -f "$MIRDIR$MLPCNW" ]; then
 	rankmirrors -n "$NMIRRS" "$MIRDIR$MLPCBK" > "$MIRDIR$MLFILE"
 
 	sleep "$SDELAY"
+	sed -i '/^\s*##/ d' "$MIRDIR$MLFILE"
 
 	printf "\n::Done selecting local mirrors. $NMIRRS mirror(s) selected...\n"
 	printf "::Will now update pacman's package list...\n\n"
